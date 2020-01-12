@@ -29,6 +29,7 @@ init =
 type Msg
     = Input String
     | Submit
+    | Delete
 
 update : Msg -> Model -> Model
 update msg model =
@@ -43,6 +44,10 @@ update msg model =
                 , memos = model.input :: model.memos
             }
 
+        Delete ->
+            { model
+                | memos = model.memos |> List.drop 1  }
+
 -- VIEW
 
 view : Model -> Html Msg
@@ -54,6 +59,7 @@ view model =
                 [ disabled (String.length model.input < 1) ]
                 [ text "Submit" ]
             ]
+        , Html.form [ onSubmit Delete ] [ button [ disabled (List.length model.memos < 1) ] [ text "Delete" ] ]
         , ul [] (List.map viewMemo model.memos)
         ]
 
