@@ -1,8 +1,7 @@
-module Main exposing (main)
-
 import Browser
-import Html exposing (Html, button, div, text)
-import Html.Events exposing (onClick)
+import Html exposing (..)
+import Html.Attributes exposing (..)
+import Html.Events exposing (..)
 
 main : Program () Model Msg
 main =
@@ -15,33 +14,49 @@ main =
 -- MODEL
 
 type alias Model =
-    Int
+    { input : String
+    , memos : List String
+    }
 
 init : Model
 init =
-    0
+    { input = ""
+    , memos = []
+    }
 
 -- UPDATE
 
 type Msg
-    = Increment
-    | Decrement
+    = Input String
+    | Submit
 
 update : Msg -> Model -> Model
 update msg model =
     case msg of
-        Increment ->
-            model + 1
+        Input input ->
+            -- 入力文字列を更新する
+            { model | input = input }
 
-        Decrement ->
-            model - 1
+        Submit ->
+            { model
+                | input = ""
+                , memos = model.input :: model.memos
+            }
 
 -- VIEW
 
 view : Model -> Html Msg
 view model =
     div []
-        [ button [ onClick Decrement ] [ text "-" ]
-        , div [] [ text (String.fromInt model) ]
-        , button [ onClick Increment ] [ text "+" ]
+        [ Html.form [ onSubmit Submit ]
+            [ input [ value model.input, onInput (\s -> Input s) ] []
+            , button
+                [ disabled (String.length model.input < 1) ]
+                [ text "Submit" ]
+            ]
+        , ul [] (List.map viewMemo model.memos)
         ]
+
+viewMemo : String -> Html Msg
+viewMemo memo =
+    li [] [ text memo ]
