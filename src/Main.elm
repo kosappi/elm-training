@@ -1,27 +1,47 @@
 module Main exposing (main)
 
-import Html exposing (Html, a, div, h1, li, text, ul)
-import Html.Attributes exposing (href)
+import Browser
+import Html exposing (Html, button, div, text)
+import Html.Events exposing (onClick)
 
-
-main : Html msg
+main : Program () Model Msg
 main =
-    div [] [ header, content ]
+    Browser.sandbox
+        { init = init
+        , update = update
+        , view = view
+        }
 
+-- MODEL
 
-header : Html msg
-header =
-    h1 [] [ text "Useful Links" ]
+type alias Model =
+    Int
 
+init : Model
+init =
+    0
 
-content : Html msg
-content =
-    ul []
-        [ linkItem "https://elm-lang.org" "Homepage"
-        , linkItem "https://package.elm-lang.org" "Packages"
-        , linkItem "https://ellie-app.com" "Playground"
+-- UPDATE
+
+type Msg
+    = Increment
+    | Decrement
+
+update : Msg -> Model -> Model
+update msg model =
+    case msg of
+        Increment ->
+            model + 1
+
+        Decrement ->
+            model - 1
+
+-- VIEW
+
+view : Model -> Html Msg
+view model =
+    div []
+        [ button [ onClick Decrement ] [ text "-" ]
+        , div [] [ text (String.fromInt model) ]
+        , button [ onClick Increment ] [ text "+" ]
         ]
-
-linkItem : String -> String -> Html msg
-linkItem url text_ =
-    li [] [ a [ href url ] [ text text_ ] ]
