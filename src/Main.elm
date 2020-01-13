@@ -119,7 +119,24 @@ view model =
                     ]
 
             Failed error ->
-                div [] [ text (Debug.toString error) ]
+                case error of
+                    Http.BadUrl str ->
+                        div [] [ text "badurl" ]
+
+                    Http.Timeout ->
+                        div [] [ text "timeout" ]
+
+                    Http.NetworkError ->
+                        div [] [ text "networkerror" ]
+
+                    Http.BadStatus status ->
+                        div [] [ text "badstatus" ]
+
+                    Http.BadBody body ->
+                        div []
+                            [ div [] [ text "badbody" ]
+                            , div [] [ text <| Debug.toString body ]
+                            ]
         ]
 
 
